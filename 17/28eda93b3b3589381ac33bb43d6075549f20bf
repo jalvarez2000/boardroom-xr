@@ -1,0 +1,265 @@
+.agents/skills/iwsdk-build-model/SKILL.md
+  s_8d939f40e212b4::t_00f654b2a9ccd6 1-311
+.agents/skills/iwsdk-build-model/agents/openai.yaml
+  s_8d939f40e212b4::t_1af8c21e16c5b9 1-4
+.agents/skills/iwsdk-build-model/assets/hardsurface.ts.template
+  s_8d939f40e212b4::t_c838a0e0fa05ff 1-599
+.agents/skills/iwsdk-compose-scene/SKILL.md
+  s_8d939f40e212b4::t_dfb75dcb3f5d2a 1-276
+.agents/skills/iwsdk-compose-scene/agents/openai.yaml
+  s_8d939f40e212b4::t_f146877dbe96df 1-4
+.agents/skills/iwsdk-compose-scene/references/environment-recipes.md
+  s_8d939f40e212b4::t_d257ce0f8e3c4e 1-234
+.agents/skills/iwsdk-compose-scene/references/extended-workflow.md
+  s_8d939f40e212b4::t_81c5d6d6666a75 1-166
+.agents/skills/iwsdk-compose-scene/references/image-intake.md
+  s_8d939f40e212b4::t_830734aa0c72c6 1-190
+.agents/skills/iwsdk-compose-scene/references/scene-composition.md
+  s_8d939f40e212b4::t_3aa33ba4cee533 1-80
+.agents/skills/iwsdk-compose-scene/references/scene-format.md
+  s_8d939f40e212b4::t_89daaff7de4c12 1-466
+.agents/skills/iwsdk-compose-scene/references/scene-review.md
+  s_8d939f40e212b4::t_e38ff4aa0fb7ac 1-66
+.agents/skills/iwsdk-compose-scene/references/text-intake.md
+  s_8d939f40e212b4::t_4ea9350512b35d 1-80
+.agents/skills/iwsdk-debug/SKILL.md
+  s_8d939f40e212b4::t_b9be66cc14ed71 1-73
+.agents/skills/iwsdk-depth-occlusion/SKILL.md
+  s_8d939f40e212b4::t_44037e3c2f5ba2 1-87
+.agents/skills/iwsdk-dev/SKILL.md
+  s_8d939f40e212b4::t_c783309df9ce59 1-45
+.agents/skills/iwsdk-dev/references/api-reference.md
+  s_8d939f40e212b4::t_8a7b4d6c105ee1 1-1525
+.agents/skills/iwsdk-dev/references/iterate.md
+  s_8d939f40e212b4::t_8398b81af408ce 1-258
+.agents/skills/iwsdk-dev/references/planner.md
+  s_8d939f40e212b4::t_8952b53e70b482 1-303
+.agents/skills/iwsdk-glasses-test/SKILL.md
+  s_8d939f40e212b4::t_8ebea19ba064e7 1-281
+.agents/skills/iwsdk-grab/SKILL.md
+  s_8d939f40e212b4::t_929ad2978e51e0 1-74
+.agents/skills/iwsdk-hosting/SKILL.md
+  s_8d939f40e212b4::t_8c2689a0cd6c3d 1-177
+.agents/skills/iwsdk-hosting/references/existing-hosts.md
+  s_8d939f40e212b4::t_e5c36631651050 1-181
+.agents/skills/iwsdk-hosting/references/vercel.md
+  s_8d939f40e212b4::t_40b12c102ff1af 1-114
+.agents/skills/iwsdk-native-xr-test/SKILL.md
+  s_8d939f40e212b4::t_e6b05c1593416e 1-246
+.agents/skills/iwsdk-physics/SKILL.md
+  s_8d939f40e212b4::t_f150cc68df0081 1-105
+.agents/skills/iwsdk-physics/references/component-reference.md
+  s_8d939f40e212b4::t_f7a507844c3a5c 1-152
+.agents/skills/iwsdk-physics/references/tuning-and-config.md
+  s_8d939f40e212b4::t_f4da006b9914a3 1-101
+.agents/skills/iwsdk-physics/references/workflows.md
+  s_8d939f40e212b4::t_667335afea3e69 1-303
+.agents/skills/iwsdk-pwa-packaging/SKILL.md
+  s_8d939f40e212b4::t_2a97e1a9df722f 1-218
+.agents/skills/iwsdk-pwa-packaging/references/app-modes.md
+  s_8d939f40e212b4::t_14821af4582c3d 1-104
+.agents/skills/iwsdk-pwa-packaging/references/bubblewrap.md
+  s_8d939f40e212b4::t_255909caf4bba7 1-219
+.agents/skills/iwsdk-pwa-packaging/references/manifest-and-icons.md
+  s_8d939f40e212b4::t_9d0e753ef9288a 1-149
+.agents/skills/iwsdk-pwa-packaging/references/store-upload.md
+  s_8d939f40e212b4::t_7820692ee157bc 1-104
+.agents/skills/iwsdk-pwa-packaging/references/troubleshooting.md
+  s_8d939f40e212b4::t_e61f60e3b46cf2 1-178
+.agents/skills/iwsdk-ray/SKILL.md
+  s_8d939f40e212b4::t_99654580b3aa05 1-69
+.agents/skills/iwsdk-ui/SKILL.md
+  s_8d939f40e212b4::t_aa97a7d4818564 1-325
+.claude/agents/iwsdk-project-code-reviewer.md
+  s_8d939f40e212b4::t_f09d251542adef 1-520
+.claude/rules/assets-and-manifest.md
+  s_8d939f40e212b4::t_f672bb38238a2b 1-57
+.claude/rules/ecs-api.md
+  s_8d939f40e212b4::t_b89ba23b576ffc 1-102
+.claude/rules/scene-json.md
+  s_8d939f40e212b4::t_84160bc36ae658 1-71
+.claude/rules/uikitml.md
+  s_8d939f40e212b4::t_b1910fd9ec89bd 1-65
+.claude/skills/iwsdk-build-model/SKILL.md
+  s_8d939f40e212b4::t_936d93657dae09 1-311
+.claude/skills/iwsdk-build-model/agents/openai.yaml
+  s_8d939f40e212b4::t_1caf89f1aa25b2 1-4
+.claude/skills/iwsdk-build-model/assets/hardsurface.ts.template
+  s_8d939f40e212b4::t_c36e94233a3d5d 1-599
+.claude/skills/iwsdk-compose-scene/SKILL.md
+  s_8d939f40e212b4::t_202bbd94b0ad2a 1-276
+.claude/skills/iwsdk-compose-scene/agents/openai.yaml
+  s_8d939f40e212b4::t_2e753a7c346f03 1-4
+.claude/skills/iwsdk-compose-scene/references/environment-recipes.md
+  s_8d939f40e212b4::t_747618258953d1 1-234
+.claude/skills/iwsdk-compose-scene/references/extended-workflow.md
+  s_8d939f40e212b4::t_3167d104491fd9 1-166
+.claude/skills/iwsdk-compose-scene/references/image-intake.md
+  s_8d939f40e212b4::t_d058b83bc48b71 1-190
+.claude/skills/iwsdk-compose-scene/references/scene-composition.md
+  s_8d939f40e212b4::t_ff389caca9007c 1-80
+.claude/skills/iwsdk-compose-scene/references/scene-format.md
+  s_8d939f40e212b4::t_e9a723c1f3ab02 1-466
+.claude/skills/iwsdk-compose-scene/references/scene-review.md
+  s_8d939f40e212b4::t_5042de4bd4d0dd 1-66
+.claude/skills/iwsdk-compose-scene/references/text-intake.md
+  s_8d939f40e212b4::t_24e0fe6c569440 1-80
+.claude/skills/iwsdk-debug/SKILL.md
+  s_8d939f40e212b4::t_4f4c33c8c22679 1-73
+.claude/skills/iwsdk-depth-occlusion/SKILL.md
+  s_8d939f40e212b4::t_f9157106457ea7 1-87
+.claude/skills/iwsdk-dev/SKILL.md
+  s_8d939f40e212b4::t_b39c91836360c6 1-45
+.claude/skills/iwsdk-dev/references/api-reference.md
+  s_8d939f40e212b4::t_a868f132741e36 1-1525
+.claude/skills/iwsdk-dev/references/iterate.md
+  s_8d939f40e212b4::t_ff0222dc2bfca9 1-258
+.claude/skills/iwsdk-dev/references/planner.md
+  s_8d939f40e212b4::t_2f5905ab93a37f 1-303
+.claude/skills/iwsdk-glasses-test/SKILL.md
+  s_8d939f40e212b4::t_9f2a3e8f0ce05f 1-281
+.claude/skills/iwsdk-grab/SKILL.md
+  s_8d939f40e212b4::t_ace3953d704468 1-74
+.claude/skills/iwsdk-hosting/SKILL.md
+  s_8d939f40e212b4::t_530200d58a6922 1-177
+.claude/skills/iwsdk-hosting/references/existing-hosts.md
+  s_8d939f40e212b4::t_e80bda41c3aca7 1-181
+.claude/skills/iwsdk-hosting/references/vercel.md
+  s_8d939f40e212b4::t_9d49998834181c 1-114
+.claude/skills/iwsdk-native-xr-test/SKILL.md
+  s_8d939f40e212b4::t_28991cd0808daf 1-246
+.claude/skills/iwsdk-physics/SKILL.md
+  s_8d939f40e212b4::t_c8b7e1973922a6 1-105
+.claude/skills/iwsdk-physics/references/component-reference.md
+  s_8d939f40e212b4::t_6522f75107045e 1-152
+.claude/skills/iwsdk-physics/references/tuning-and-config.md
+  s_8d939f40e212b4::t_0f6dead7a34957 1-101
+.claude/skills/iwsdk-physics/references/workflows.md
+  s_8d939f40e212b4::t_2f61c870cd007c 1-303
+.claude/skills/iwsdk-pwa-packaging/SKILL.md
+  s_8d939f40e212b4::t_149d39fcd15b09 1-218
+.claude/skills/iwsdk-pwa-packaging/references/app-modes.md
+  s_8d939f40e212b4::t_811f8febf9fc83 1-104
+.claude/skills/iwsdk-pwa-packaging/references/bubblewrap.md
+  s_8d939f40e212b4::t_259fe4deb7d645 1-219
+.claude/skills/iwsdk-pwa-packaging/references/manifest-and-icons.md
+  s_8d939f40e212b4::t_603752b5a610eb 1-149
+.claude/skills/iwsdk-pwa-packaging/references/store-upload.md
+  s_8d939f40e212b4::t_d4bfa442aacce0 1-104
+.claude/skills/iwsdk-pwa-packaging/references/troubleshooting.md
+  s_8d939f40e212b4::t_bd562a567cc52e 1-178
+.claude/skills/iwsdk-ray/SKILL.md
+  s_8d939f40e212b4::t_19484456cca402 1-69
+.claude/skills/iwsdk-ui/SKILL.md
+  s_8d939f40e212b4::t_7653daaa2b2204 1-325
+.cursor/permissions.json
+  s_8d939f40e212b4::t_5f215793465151 1-8
+.cursor/rules/assets-and-manifest.mdc
+  s_8d939f40e212b4::t_b1d37b9f255c4d 1-59
+.cursor/rules/ecs-api.mdc
+  s_8d939f40e212b4::t_ece29f19887574 1-104
+.cursor/rules/scene-json.mdc
+  s_8d939f40e212b4::t_5683efbd82a17b 1-73
+.cursor/rules/uikitml.mdc
+  s_8d939f40e212b4::t_86e5a7c490c041 1-67
+.github/instructions/assets-and-manifest.instructions.md
+  s_8d939f40e212b4::t_11852a405ea3bd 1-54
+.github/instructions/ecs-api.instructions.md
+  s_8d939f40e212b4::t_563e73eee867a4 1-100
+.github/instructions/scene-json.instructions.md
+  s_8d939f40e212b4::t_6d5a2b1bd0e4ff 1-70
+.github/instructions/uikitml.instructions.md
+  s_8d939f40e212b4::t_ed7e028ea4fd63 1-64
+.gitignore
+  s_8d939f40e212b4::t_a72867f83fcb79 1-45
+.nvmrc
+  s_8d939f40e212b4::t_1317a7f8e94155 1
+AGENTS.md
+  s_8d939f40e212b4::t_f92dff9ee038f2 1-223
+CLAUDE.md
+  s_8d939f40e212b4::t_51a49cd5581007 1-3
+README.md
+  s_0d8eec9b1794f4::t_2c0b42ae0d15c6 1-59
+index.html
+  s_8d939f40e212b4::t_68faa31ce56cce 1-16
+iwsdk.config.json
+  s_8d939f40e212b4::t_7d49980be61917 1-57
+opencode.json
+  s_8d939f40e212b4::t_a6bc98efa49a6f 1-41
+package-lock.json
+  s_8d939f40e212b4::t_58524aff62b5d7 1-4814
+package.json
+  s_8d939f40e212b4::t_23174641117894 1-40
+pnpm-workspace.yaml
+  s_8d939f40e212b4::t_8baa46cf8c7a83 1-18
+public/scenes/AGENTS.md
+  s_8d939f40e212b4::t_8df6a4abe95e81 1-70
+public/scenes/main.iwsdk.scene.json
+  s_8d939f40e212b4::t_caee11b9b3f059 1-41
+public/ui/AGENTS.md
+  s_8d939f40e212b4::t_8cb58b1546aaa8 1-64
+public/ui/controls.uikitml
+  s_0d8eec9b1794f4::t_b9f9953b2bbf36 1-69
+src/AGENTS.md
+  s_8d939f40e212b4::t_33d9bcf6a3f45a 1-151
+src/api.ts
+  s_0d8eec9b1794f4::t_9e536f20763efa 1-107
+src/assets.ts
+  s_8d939f40e212b4::t_0289f9d04d07d1 1-12
+src/boardroom.ts
+  s_0d8eec9b1794f4::t_bafec85c587d63 1-238
+src/bridge.ts
+  s_0d8eec9b1794f4::t_656e5fb95e45d1 1-33
+src/components.ts
+  s_8d939f40e212b4::t_e6dde15d382137 1-3
+src/index.ts
+  s_0d8eec9b1794f4::t_182599369aeedd 1-25
+src/meeting-system.ts
+  s_0d8eec9b1794f4::t_aebd193cb4ecb3 1-233
+src/person.ts
+  s_0d8eec9b1794f4::t_5f7984bced4904 1-777
+src/props.ts
+  s_8d939f40e212b4::t_d7ba4034061441 1-246
+src/room.ts
+  s_8d939f40e212b4::t_3f72d1e78b9cf8 1-738
+src/ui.ts
+  s_0d8eec9b1794f4::t_1636b42a354a13 1-142
+src/vite-env.d.ts
+  s_8d939f40e212b4::t_726371323a9108 1-2
+src/voice.ts
+  s_0d8eec9b1794f4::t_8ac530afd14396 1-227
+tsconfig.json
+  s_8d939f40e212b4::t_5f432786c3fce7 1-15
+vite.config.ts
+  s_8d939f40e212b4::t_f5645778db5606 1-45
+.claude/settings.json
+  s_8d939f40e212b4::t_86a189f46b028d 1-31
+src/avatar.ts
+  s_8d939f40e212b4::t_aff47eba19ba38 1-44
+src/util.ts
+  s_8d939f40e212b4::t_10d8581d54c48f 1-236
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "1728eda93b3b3589381ac33bb43d6075549f20bf",
+  "prompts": {},
+  "sessions": {
+    "s_0d8eec9b1794f4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "67d40ab4-de89-4782-ab87-01014b0146a0",
+        "model": "unknown"
+      },
+      "human_author": "jalvarez <jalvarez2000@gmail.com>"
+    },
+    "s_8d939f40e212b4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e039d250-5096-42d4-a573-f3eda97cd35c",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "jalvarez <jalvarez2000@gmail.com>"
+    }
+  }
+}
