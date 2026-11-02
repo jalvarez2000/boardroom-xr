@@ -11,8 +11,7 @@ import {
   MeshBasicMaterial,
   MeshStandardMaterial,
   PlaneGeometry,
-  PointLight,
-  SphereGeometry,
+  Object3D,
   SRGBColorSpace,
   CanvasTexture,
 } from 'three';
@@ -46,7 +45,7 @@ const D_TILES = 8 / 0.6;
 
 export const TABLE = {
   width: 1.3,
-  length: 3.2,
+  length: 4.4,
   zFront: -0.25,
   y: 0.75,
 };
@@ -263,12 +262,12 @@ function slide(): CanvasTexture {
     ctx.fillRect(0, 0, w, h);
     ctx.fillStyle = '#ffffff';
     ctx.font = '700 62px system-ui, sans-serif';
-    ctx.fillText('Reunión de dirección', 70, 120);
+    ctx.fillText('Board meeting', 70, 120);
     ctx.fillStyle = '#9fb7e0';
     ctx.font = '400 34px system-ui, sans-serif';
-    ctx.fillText('Resultados trimestrales · Plan de acción', 70, 175);
+    ctx.fillText('Quarterly results · Action plan', 70, 175);
     const bars = [0.45, 0.62, 0.55, 0.78, 0.9];
-    const labels = ['T1', 'T2', 'T3', 'T4', 'T5'];
+    const labels = ['Q1', 'Q2', 'Q3', 'Q4', 'Q5'];
     for (let i = 0; i < bars.length; i++) {
       const bx = 110 + i * 130;
       const bh = bars[i] * 360;
@@ -289,10 +288,10 @@ function slide(): CanvasTexture {
     ctx.stroke();
     ctx.fillStyle = '#ffffff';
     ctx.font = '600 40px system-ui, sans-serif';
-    ctx.fillText('Orden del día', 820, 300);
+    ctx.fillText('Agenda', 820, 300);
     ctx.fillStyle = '#c7d6f3';
     ctx.font = '400 32px system-ui, sans-serif';
-    ['1. Marketing', '2. Ventas', '3. I+D', '4. Presupuesto'].forEach((s, i) =>
+    ['1. Marketing', '2. Sales', '3. R&D', '4. Budget'].forEach((s, i) =>
       ctx.fillText(s, 820, 360 + i * 56),
     );
   });
@@ -382,14 +381,29 @@ export interface Room {
   group: Group;
   chairs: Group[];
   light: DirectionalLight;
+  /** tablet apoyada en la carpeta del CEO; su pantalla (plano XY local, +Z hacia fuera) acoge el popup de la reunión */
+  tablet: Group;
+  /** la oficina como tal (suelo, paredes, techo y adornos): se oculta en realidad mixta, donde queda la mesa, las sillas, la pizarra y la tablet */
+  office: Object3D[];
+  /** pantalla de la pared (la pizarra) y de la tablet: reciben la página que se presenta */
+  wallScreen: Mesh;
+  tabletScreen: Mesh;
 }
 
+/** Tablet de la mesa (m, grados): `nearZ` es su borde cercano; `tiltDeg` su inclinación respecto a la mesa. */
+export const TABLET = { x: 0, nearZ: -0.49, tiltDeg: 55, w: 0.54, h: 0.38 };
+
+/** Tamaño de la pantalla de la tablet (m); la proporción debe coincidir con la del popup acoplado en ui.ts. */
+export const TABLET_SCREEN = { w: 0.5, h: 0.341, z: 0.0067 };
+
+/** 3 asientos por lado (alternando izquierda/derecha por fila); la cabecera queda libre para ver la pizarra. */
 export const SEATS = [
-  { x: -0.88, z: -1.9, rotY: Math.PI / 2 },
-  { x: 0.88, z: -1.9, rotY: -Math.PI / 2 },
-  { x: 0, z: -3.68, rotY: 0 },
-  { x: -0.88, z: -3.05, rotY: Math.PI / 2 },
-  { x: 0.88, z: -3.05, rotY: -Math.PI / 2 },
+  { x: -0.88, z: -1.4, rotY: Math.PI / 2 },
+  { x: 0.88, z: -1.4, rotY: -Math.PI / 2 },
+  { x: -0.88, z: -2.55, rotY: Math.PI / 2 },
+  { x: 0.88, z: -2.55, rotY: -Math.PI / 2 },
+  { x: -0.88, z: -3.7, rotY: Math.PI / 2 },
+  { x: 0.88, z: -3.7, rotY: -Math.PI / 2 },
 ];
 
 export function buildRoom(): Room {
@@ -520,13 +534,13 @@ export function buildRoom(): Room {
   const feature = box(slats, 4.6, 2.5, 0.04, 0, 1.35, ROOM.zMin + 0.02, g);
   feature.receiveShadow = true;
   const bezel = std(0x08090b, 0.3, 0.2);
-  box(bezel, 2.62, 1.52, 0.05, 0, 1.5, ROOM.zMin + 0.065, g);
-  const screen = new Mesh(
+  const wallBezel = box(bezel, 2.62, 1.52, 0.05, 0, 1.5, ROOM.zMin + 0.065, g);
+  const wallScreen = new Mesh(
     new PlaneGeometry(2.5, 1.4),
-    new MeshBasicMaterial({ map: slide(), toneMapped: false }),
+    new MeshBasicMaterial({ map: slide(), toneMapped: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }),
   );
-  screen.position.set(0, 1.5, ROOM.zMin + 0.095);
-  g.add(screen);
+  wallScreen.position.set(0, 1.5, ROOM.zMin + 0.095);
+  g.add(wallScreen);
 
   // right wall decor
   for (const [z, seed] of [[-1.2, 4], [-3.0, 9]] as const) {
@@ -621,6 +635,10 @@ export function buildRoom(): Room {
   g.add(bottle);
   void cz0;
 
+  // todo lo anterior es la oficina (suelo, paredes, techo, adornos): en realidad mixta desaparece; la pizarra de la
+  // pared y su marco se quedan flotando
+  const office = g.children.filter((o) => o !== wallScreen && o !== wallBezel);
+
   // ---------------------------------------------------- table
   const topTex = walnut();
   topTex.repeat.set(0.45, 0.45);
@@ -647,47 +665,83 @@ export function buildRoom(): Room {
   top.castShadow = true;
   top.receiveShadow = true;
   const legM = std(0x15171b, 0.35, 0.6);
-  for (const z of [-0.95, -2.75]) {
+  for (const z of [-1.25, -3.65]) {
     const l = box(legM, 0.1, 0.7, 0.95, 0, 0.35, z, g);
     l.castShadow = true;
     box(legM, 0.6, 0.03, 0.9, 0, 0.015, z, g);
   }
-  box(legM, 0.07, 0.07, 1.8, 0, 0.62, -1.85, g);
+  box(legM, 0.07, 0.07, 2.4, 0, 0.62, -2.45, g);
   const grommet = std(0x0a0a0a, 0.4, 0.5);
-  cyl(grommet, 0.04, 0.004, 0, TABLE.y + 0.001, -1.85, g);
+  cyl(grommet, 0.04, 0.004, 0, TABLE.y + 0.001, -2.45, g);
 
   // centre props: speakerphone, carafe, glasses
   const darkPlastic = std(0x1a1b1e, 0.4);
-  cyl(darkPlastic, 0.12, 0.025, 0, TABLE.y + 0.0125, -1.6, g);
+  cyl(darkPlastic, 0.12, 0.025, 0, TABLE.y + 0.0125, -2.0, g);
   const led = new MeshBasicMaterial({ color: 0x35d07f });
-  mesh(new CylinderGeometry(0.1, 0.1, 0.002, 28), led, 0, TABLE.y + 0.027, -1.6, g);
-  for (const [x, z] of [[-0.16, -2.15], [0.2, -2.9]] as const) {
+  mesh(new CylinderGeometry(0.1, 0.1, 0.002, 28), led, 0, TABLE.y + 0.027, -2.0, g);
+  for (const [x, z] of [[-0.16, -2.6], [0.2, -3.4]] as const) {
     const c = createCarafe();
     c.position.set(x, TABLE.y, z);
     g.add(c);
   }
-  for (const [x, z] of [[0.14, -2.05], [-0.2, -3.0], [-0.15, -1.2], [0.2, -1.2]] as const) {
+  for (const [x, z] of [[0.14, -2.3], [-0.2, -3.6]] as const) {
     const gl = createWaterGlass({ level: 0.55 + ((x * 7 + z * 3) % 0.3) });
     gl.position.set(x, TABLE.y, z);
     g.add(gl);
   }
 
-  // my place (presiding): leather folder, pen, glass, coffee, phone
+  // my place (presiding): leather folder, pen, coffee, phone
   const leather = std(0x2a2118, 0.5);
-  box(leather, 0.24, 0.02, 0.32, -0.3, TABLE.y + 0.01, -0.62, g).rotation.y = 0.08;
-  box(std(0xfbfaf5, 0.9), 0.2, 0.004, 0.28, -0.3, TABLE.y + 0.022, -0.62, g).rotation.y = 0.08;
-  const pen = cyl(std(0xb88b3a, 0.25, 0.8), 0.005, 0.15, -0.12, TABLE.y + 0.006, -0.55, g);
+  box(leather, 0.24, 0.02, 0.32, 0.44, TABLE.y + 0.01, -0.42, g).rotation.y = 0.08;
+  box(std(0xfbfaf5, 0.9), 0.2, 0.004, 0.28, 0.44, TABLE.y + 0.022, -0.42, g).rotation.y = 0.08;
+  const pen = cyl(std(0xb88b3a, 0.25, 0.8), 0.005, 0.15, 0.61, TABLE.y + 0.0055, -0.5, g);
   pen.rotation.set(0, 0, Math.PI / 2);
   pen.rotation.order = 'YXZ';
-  pen.rotation.y = 0.5;
-  const myGlass = createWaterGlass({ level: 0.7 });
-  myGlass.position.set(0.1, TABLE.y, -0.72);
-  g.add(myGlass);
+  pen.rotation.y = 1.25;
   const myCup = createCoffeeCup({ fill: 0.75, angle: 0.5 });
   myCup.position.set(-0.55, TABLE.y, -0.55);
   g.add(myCup);
-  const phone = box(std(0x111214, 0.25, 0.5), 0.072, 0.008, 0.15, -0.55, TABLE.y + 0.004, -0.9, g);
-  phone.rotation.y = -0.3;
+
+  // tablet standing on the table in front of my place: the DOM popup (flat screen) or the UIKit panel (XR) sits on its screen.
+  // `public/scenes/main.iwsdk.scene.json` places 'tablet-panel' on this screen: keep both in sync.
+  const tablet = new Group();
+  tablet.name = 'meeting-tablet';
+  const tilt = (TABLET.tiltDeg * Math.PI) / 180;
+  const body = std(0x1b1d22, 0.3, 0.55);
+  tablet.rotation.x = -(Math.PI / 2 - tilt);
+  tablet.position.set(
+    TABLET.x,
+    TABLE.y + 0.012 + (TABLET.h / 2) * Math.sin(tilt) + 0.006,
+    TABLET.nearZ - (TABLET.h / 2) * Math.cos(tilt),
+  );
+  box(body, TABLET.w, TABLET.h, 0.012, 0, 0, 0, tablet).castShadow = true;
+  const tabletScreen = mesh(
+    new PlaneGeometry(TABLET_SCREEN.w, TABLET_SCREEN.h),
+    new MeshBasicMaterial({ color: 0x12161e, toneMapped: false }),
+    0,
+    0,
+    TABLET_SCREEN.z,
+    tablet,
+  );
+  g.add(tablet);
+  // soft contact shadow, front lip and a strut that props the tablet up from behind
+  const shadow = mesh(
+    new PlaneGeometry(TABLET.w + 0.1, 0.42),
+    new MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.28, depthWrite: false }),
+    TABLET.x,
+    TABLE.y + 0.0015,
+    TABLET.nearZ - 0.16,
+    g,
+  );
+  shadow.rotation.x = -Math.PI / 2;
+  box(body, TABLET.w - 0.04, 0.012, 0.012, TABLET.x, TABLE.y + 0.006, TABLET.nearZ + 0.004, g);
+  const y0 = TABLE.y + 0.012;
+  const topZ = TABLET.nearZ - TABLET.h * Math.cos(tilt);
+  const topY = y0 + TABLET.h * Math.sin(tilt);
+  const backZ = topZ - 0.2;
+  const strutLen = Math.hypot(topY - y0, topZ - backZ);
+  const strut = box(body, 0.03, 0.012, strutLen, TABLET.x, (topY + y0) / 2, (topZ + backZ) / 2, g);
+  strut.rotation.x = -Math.atan2(topY - y0, topZ - backZ);
 
   // chairs for every seat (pulled out when empty)
   const chairs: Group[] = [];
@@ -702,14 +756,14 @@ export function buildRoom(): Room {
     chairs.push(c);
   }
 
-  // lights
-  g.add(new HemisphereLight(0xdfeaff, 0x9a8468, 0.9));
-  g.add(new AmbientLight(0xfff2e0, 0.35));
+  // lights: pocas luces, cada luz puntual se calcula en cada píxel de cada objeto y en el visor satura la GPU
+  g.add(new HemisphereLight(0xdfeaff, 0x9a8468, 1.5));
+  g.add(new AmbientLight(0xfff2e0, 0.7));
   const sun = new DirectionalLight(0xfff1dc, 2.4);
   sun.position.set(-6, 4.5, -1.5);
   sun.target.position.set(0, 0.5, -2);
   sun.castShadow = true;
-  sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.mapSize.set(1024, 1024);
   sun.shadow.camera.left = -5;
   sun.shadow.camera.right = 5;
   sun.shadow.camera.top = 5;
@@ -719,14 +773,7 @@ export function buildRoom(): Room {
   sun.shadow.bias = -0.0005;
   sun.shadow.radius = 4;
   g.add(sun, sun.target);
-  for (const z of [-0.6, -2.0, -3.4]) {
-    for (const x of [-1.1, 1.1]) {
-      const p = new PointLight(0xfff0dc, 1.4, 6, 2);
-      p.position.set(x, H - 0.25, z);
-      g.add(p);
-    }
-  }
-  return { group: g, chairs, light: sun };
+  return { group: g, chairs, light: sun, tablet, wallScreen, tabletScreen, office };
 }
 
 // the city view is only built once

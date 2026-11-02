@@ -1,0 +1,45 @@
+<style>
+  .bar {
+    flex-direction: row;
+    width: 780px;
+    height: 56px;
+    padding: 8px;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .cap {
+    flex-grow: 1;
+    color: #e4e4e7;
+    font-size: 13px;
+    line-height: 16px;
+    text-align: center;
+  }
+</style>
+<Panel class="bar">
+  <Button id="bb-prev">
+    <ButtonIcon><ChevronLeft></ChevronLeft></ButtonIcon>
+  </Button>
+  <Button id="bb-zoomout">
+    <ButtonIcon><ZoomOut></ZoomOut></ButtonIcon>
+  </Button>
+  <Button id="bb-zoomin">
+    <ButtonIcon><ZoomIn></ZoomIn></ButtonIcon>
+  </Button>
+  <div id="bb-caption" class="cap">Whiteboard</div>
+  <Button id="bb-near">
+    <ButtonIcon><Maximize2></Maximize2></ButtonIcon>
+  </Button>
+  <Button id="bb-download">
+    <ButtonIcon><Download></Download></ButtonIcon>
+  </Button>
+  <Button id="bb-tablet">
+    <ButtonIcon><Tablet></Tablet></ButtonIcon>
+  </Button>
+  <Button id="bb-help">
+    <ButtonIcon><CircleHelp></CircleHelp></ButtonIcon>
+  </Button>
+  <Button id="bb-next">
+    <ButtonIcon><ChevronRight></ChevronRight></ButtonIcon>
+  </Button>
+</Panel>

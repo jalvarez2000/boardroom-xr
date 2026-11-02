@@ -33,20 +33,41 @@ export class Listener {
   private text = '';
   private useServer = !SR;
   active = false;
+  /** nivel del micrófono (0..1) mientras se graba en modo servidor; en Web Speech no hay nivel */
+  level = 0;
+  onLevel: (level: number) => void = () => {};
+  private cancelled = false;
+  private heard = true;
+  private meter: number | null = null;
+  private audioCtx: AudioContext | null = null;
 
   /** Empieza a escuchar. Devuelve el texto cuando se llama a `stop()` (o al callar el usuario con Web Speech). */
   start(onInterim?: (text: string) => void): Promise<string> {
     this.active = true;
+    this.cancelled = false;
     this.text = '';
     return new Promise<string>((resolve, reject) => {
       this.resolve = resolve;
       if (!this.useServer && SR) {
         const rec = new SR();
         this.rec = rec;
-        rec.lang = 'es-ES';
+        rec.lang = 'en-US';
         rec.interimResults = true;
         rec.continuous = false;
+        // si el dictado del navegador no da ni una palabra en 5 s (en algunas sesiones XR no responde), se graba y se transcribe en el servidor
+        const watchdog = window.setTimeout(() => {
+          if (this.rec !== rec || this.text) return;
+          this.rec = null;
+          this.useServer = true;
+          try {
+            rec.abort();
+          } catch {
+            // nada
+          }
+          this.startRecorder().catch(reject);
+        }, 5000);
         rec.onresult = (e) => {
+          window.clearTimeout(watchdog);
           let t = '';
           for (let i = 0; i < e.results.length; i++) t += e.results[i]?.[0]?.transcript ?? '';
           this.text = t;
@@ -60,6 +81,7 @@ export class Listener {
           this.startRecorder().catch(reject);
         };
         rec.onend = () => {
+          window.clearTimeout(watchdog);
           if (this.rec === rec) this.finish(this.text);
         };
         try {
@@ -79,24 +101,83 @@ export class Listener {
     this.chunks = [];
     const rec = new MediaRecorder(this.stream);
     this.recorder = rec;
+    this.heard = true; // sin medidor de nivel (analizador no disponible) se transcribe siempre
     rec.ondataavailable = (e) => e.data.size > 0 && this.chunks.push(e.data);
     rec.onstop = async () => {
+      this.stopMeter();
       const blob = new Blob(this.chunks, { type: rec.mimeType || 'audio/webm' });
       this.stream?.getTracks().forEach((t) => t.stop());
       this.stream = null;
       let text = '';
-      if (blob.size > 1500) {
+      // sin voz (o cancelado) no se gasta una transcripción
+      if (blob.size > 1500 && this.heard && !this.cancelled) {
         try {
           text = await api.transcribe(blob);
         } catch (e) {
-          console.warn('transcripción fallida', e);
+          console.warn('transcription failed', e);
         }
       }
       this.finish(text);
     };
     rec.start();
+    this.watchLevel(rec);
     // seguridad: máx. 30 s de grabación
     setTimeout(() => this.recorder === rec && rec.state === 'recording' && rec.stop(), 30_000);
+  }
+
+  /**
+   * Mide el nivel del micrófono: da la señal visual de que te oye y corta la grabación sola cuando dejas de hablar
+   * (sin esto había que volver a pulsar Hablar y parecía que no pasaba nada).
+   */
+  private watchLevel(rec: MediaRecorder): void {
+    if (!this.stream) return;
+    try {
+      const ctx = new AudioContext();
+      this.audioCtx = ctx;
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 512;
+      ctx.createMediaStreamSource(this.stream).connect(analyser);
+      const buf = new Uint8Array(analyser.fftSize);
+      const t0 = performance.now();
+      let lastVoice = 0;
+      let heard = false;
+      this.heard = false;
+      this.meter = window.setInterval(() => {
+        analyser.getByteTimeDomainData(buf);
+        let sum = 0;
+        for (const v of buf) sum += ((v - 128) / 128) ** 2;
+        const rms = Math.sqrt(sum / buf.length);
+        this.level = Math.min(1, rms * 6);
+        this.onLevel(this.level);
+        const now = performance.now();
+        if (rms > 0.02) {
+          heard = true;
+          this.heard = true;
+          lastVoice = now;
+        }
+        if (rec.state !== 'recording') return;
+        if (heard && now - lastVoice > 1300) rec.stop(); // dejó de hablar
+        else if (!heard && now - t0 > 9000) rec.stop(); // nunca habló
+      }, 100);
+    } catch {
+      // sin análisis de audio: se graba igual y se corta al pulsar de nuevo
+    }
+  }
+
+  private stopMeter(): void {
+    if (this.meter !== null) window.clearInterval(this.meter);
+    this.meter = null;
+    void this.audioCtx?.close().catch(() => {});
+    this.audioCtx = null;
+    this.level = 0;
+    this.onLevel(0);
+  }
+
+  /** Corta la escucha sin enviar nada (silenciar el micrófono). */
+  cancel(): void {
+    this.cancelled = true;
+    this.text = '';
+    this.stop();
   }
 
   /** Termina la escucha; la promesa de `start()` se resuelve con lo dicho. */
@@ -121,7 +202,7 @@ export class Listener {
     this.rec = null;
     this.recorder = null;
     this.active = false;
-    done?.(text.trim());
+    done?.(this.cancelled ? '' : text.trim());
   }
 }
 
@@ -131,6 +212,8 @@ interface Utterance {
   agentId: string;
   text: string;
   voice: string;
+  /** audio ya pedido al servidor mientras suena lo anterior */
+  audio?: Promise<Blob>;
 }
 
 /** Cola de locuciones: cada director habla con su voz (TTS del servidor; si falla, speechSynthesis). */
@@ -148,6 +231,9 @@ export class Speaker {
   }
 
   enqueue(u: Utterance): void {
+    // el TTS de cada frase se pide en cuanto llega, para que no haya hueco entre frases
+    u.audio = api.speak(u.text, u.voice);
+    u.audio.catch(() => {});
     this.queue.push(u);
     if (!this.playing) void this.next();
   }
@@ -176,7 +262,7 @@ export class Speaker {
     this.playing = true;
     this.onPlay(u);
     try {
-      const blob = await api.speak(u.text, u.voice);
+      const blob = await (u.audio ?? api.speak(u.text, u.voice));
       if (epoch !== this.epoch) return;
       await this.play(URL.createObjectURL(blob), epoch);
     } catch {
@@ -212,11 +298,11 @@ export class Speaker {
       const synth = window.speechSynthesis;
       if (!synth || epoch !== this.epoch) return resolve();
       const msg = new SpeechSynthesisUtterance(u.text);
-      msg.lang = 'es-ES';
-      const voices = synth.getVoices().filter((v) => v.lang.startsWith('es'));
+      msg.lang = 'en-US';
+      const voices = synth.getVoices().filter((v) => v.lang.startsWith('en'));
       const wantFemale = u.voice.startsWith('female');
       msg.voice =
-        voices.find((v) => (wantFemale ? /female|mujer|monica|paulina|lucia|helena/i : /male|hombre|jorge|diego|pablo/i).test(v.name)) ??
+        voices.find((v) => (wantFemale ? /female|samantha|karen|zira|victoria|moira|tessa|susan|hazel|google us english/i : /\bmale|alex|daniel|david|mark|fred|george|james|ryan/i).test(v.name)) ??
         voices[0] ??
         null;
       msg.onend = () => resolve();

@@ -1,0 +1,97 @@
+<style>
+  .root {
+    flex-direction: column;
+    width: 600px;
+    padding: 18px;
+    gap: 12px;
+  }
+
+  .eyebrow {
+    color: #f5d90a;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+  }
+
+  .head {
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .main {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .art {
+    width: 200px;
+    height: 170px;
+  }
+
+  .col {
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 6px;
+  }
+
+  .title {
+    color: #fafaf7;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 28px;
+    flex-grow: 1;
+  }
+
+  .body {
+    color: #e4e4e7;
+    font-size: 17px;
+    line-height: 24px;
+    height: 112px;
+  }
+
+  .try {
+    color: #a1a1aa;
+    font-size: 15px;
+    line-height: 20px;
+    height: 24px;
+  }
+
+  .row {
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .grow {
+    flex-grow: 1;
+  }
+
+  .dots {
+    color: #a1a1aa;
+    font-size: 14px;
+    flex-grow: 1;
+    text-align: center;
+  }
+</style>
+<Panel class="root">
+  <div class="eyebrow">HOW TO USE THE WHITEBOARD</div>
+  <div class="main">
+    <div id="tu-art" class="art"></div>
+    <div class="col">
+      <div id="tu-title" class="title">Look and pinch</div>
+      <div id="tu-body" class="body">-</div>
+      <div id="tu-try" class="try"> </div>
+    </div>
+  </div>
+  <div class="row">
+    <Button id="tu-prev"><ButtonLabel>Previous</ButtonLabel></Button>
+    <div id="tu-dots" class="dots">1 / 6</div>
+    <Button id="tu-next"><ButtonLabel id="tu-next-label">Next</ButtonLabel></Button>
+  </div>
+  <div class="row">
+    <Button id="tu-never" class="grow"><ButtonLabel id="tu-never-label">[ ] Don't show again</ButtonLabel></Button>
+    <Button id="tu-skip"><ButtonLabel>Skip</ButtonLabel></Button>
+  </div>
+</Panel>

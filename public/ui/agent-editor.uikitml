@@ -1,0 +1,67 @@
+<style>
+  .root {
+    flex-direction: column;
+    width: 460px;
+    padding: 18px;
+    gap: 10px;
+  }
+
+  .eyebrow {
+    color: #f5d90a;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+  }
+
+  .role {
+    color: #a1a1aa;
+    font-size: 14px;
+    line-height: 18px;
+  }
+
+  .name {
+    color: #fafaf7;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 36px;
+    height: 40px;
+  }
+
+  .hint {
+    color: #a1a1aa;
+    font-size: 13px;
+    line-height: 18px;
+  }
+
+  .err {
+    color: #f87171;
+    font-size: 14px;
+    line-height: 18px;
+    height: 36px;
+  }
+
+  .row {
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .grow {
+    flex-grow: 1;
+  }
+</style>
+<Panel class="root">
+  <div class="eyebrow">EDIT DIRECTOR</div>
+  <div id="ae-role" class="role">Role</div>
+  <div id="ae-name" class="name">Name</div>
+  <div class="hint">Type with the keyboard on the table. Enter saves.</div>
+  <div class="row">
+    <Button id="ae-female" class="grow"><ButtonLabel id="ae-female-label">( ) Female</ButtonLabel></Button>
+    <Button id="ae-male" class="grow"><ButtonLabel id="ae-male-label">( ) Male</ButtonLabel></Button>
+  </div>
+  <div id="ae-error" class="err"> </div>
+  <div class="row">
+    <Button id="ae-cancel" class="grow"><ButtonLabel>Cancel</ButtonLabel></Button>
+    <Button id="ae-save" class="grow"><ButtonLabel id="ae-save-label">Save</ButtonLabel></Button>
+  </div>
+</Panel>

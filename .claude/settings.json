@@ -20,7 +20,8 @@
       "mcp__metavr__*",
       "mcp__claude-in-chrome__tabs_context_mcp",
       "ClaudeInChromeDomain(localhost:8443)",
-      "ClaudeInChromeDomain(localhost:8090)"
+      "ClaudeInChromeDomain(localhost:8090)",
+      "ClaudeInChromeDomain(start-developer-competition-26.devpost.com)"
     ]
   },
   "enabledMcpjsonServers": [

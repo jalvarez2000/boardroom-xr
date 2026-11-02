@@ -10,8 +10,8 @@
   },
   "world": {
     "xr": {
-      "mode": "vr",
-      "offer": "always",
+      "mode": "ar",
+      "offer": "none",
       "features": {
         "handTracking": true,
         "gazeTracking": true
@@ -22,8 +22,8 @@
     },
     "render": {
       "fov": 70,
-      "near": 0.001,
-      "far": 200,
+      "near": 0.08,
+      "far": 40,
       "camera": {
         "position": [
           0,

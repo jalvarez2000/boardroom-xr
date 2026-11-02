@@ -14,12 +14,11 @@ import {
   SRGBColorSpace,
   Texture,
   TextureLoader,
-  TorusGeometry,
   Vector3,
   DoubleSide,
 } from 'three';
 import { loadFbx } from './avatar.js';
-import { createCoffeeCup, createWaterGlass, blobShadow } from './props.js';
+import { createCoffeeCup, createWaterGlass } from './props.js';
 import {
   box,
   canvasTexture,
@@ -151,6 +150,7 @@ export class Person {
   private talkGain = 0;
   private gesture = 0;
   private speaking = false;
+  private thinking = false;
   private phase: number;
   private look = new Vector3();
   private visemeT = 0;
@@ -194,7 +194,7 @@ export class Person {
       talk: labelTexture(spec.name, true),
     };
     this.labelMat.map = this.labelTex.idle;
-    this.bag.track(this.labelMat, 1);
+    // la etiqueta NO va en `bag`: setFade() apaga `transparent` al sentarse y el fondo transparente salía blanco
     this.label = new Mesh(new PlaneGeometry(0.36, 0.09), this.labelMat);
     this.label.position.set(0, 1.62, 0.02);
     this.label.renderOrder = 20;
@@ -476,8 +476,23 @@ export class Person {
     this.labelMat.needsUpdate = true;
   }
 
+  /** Razonando la respuesta: baja la cabeza hacia sus apuntes. */
+  setThinking(on: boolean): void {
+    this.thinking = on;
+  }
+
   isSpeaking(): boolean {
     return this.speaking;
+  }
+
+  /** World pose of the name tag (the hit area for editing the director sits on it). */
+  labelPose(pos: Vector3, quat: Quaternion): void {
+    this.label.getWorldPosition(pos);
+    this.label.getWorldQuaternion(quat);
+  }
+
+  get female(): boolean {
+    return !!this.spec.female;
   }
 
   /** Writes the world position of the head into `out`. */
@@ -534,7 +549,11 @@ export class Person {
       if (!needsNotes && this.rand() < 0.5) this.glanceDown = 0;
     }
     if (this.speaking) this.glanceDown = 0;
-    pitchT += this.glanceDown * 0.38;
+    else if (this.thinking) {
+      this.glanceDown = 1;
+      this.nextGlance = 1; // al terminar de pensar retoma su ritmo normal
+    }
+    pitchT += this.glanceDown * 0.38 + (this.thinking && !this.speaking ? 0.18 : 0);
     yawT += Math.sin(t * 0.35) * 0.02;
     pitchT += Math.sin(t * 0.5 + 1) * 0.015;
     this.yaw += (yawT - this.yaw) * k;
