@@ -230,9 +230,20 @@ export class Speaker {
     return this.playing || this.queue.length > 0;
   }
 
+  /** audios ya pedidos de antemano (muletillas): suenan al instante, sin esperar al TTS */
+  private cache = new Map<string, Promise<Blob>>();
+
+  prewarm(text: string, voice: string): void {
+    const key = `${voice}|${text}`;
+    if (this.cache.has(key)) return;
+    const p = api.speak(text, voice);
+    p.catch(() => this.cache.delete(key));
+    this.cache.set(key, p);
+  }
+
   enqueue(u: Utterance): void {
     // el TTS de cada frase se pide en cuanto llega, para que no haya hueco entre frases
-    u.audio = api.speak(u.text, u.voice);
+    u.audio = this.cache.get(`${u.voice}|${u.text}`) ?? api.speak(u.text, u.voice);
     u.audio.catch(() => {});
     this.queue.push(u);
     if (!this.playing) void this.next();

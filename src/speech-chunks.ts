@@ -8,7 +8,8 @@ export function speakable(text: string): string {
     .trim();
 }
 
-const FIRST_MIN = 10; // la primera frase sale pronto para que la voz arranque con el streaming
+const FIRST_MIN = 14; // la primera frase sale pronto para que la voz arranque con el streaming
+const FIRST_MAX = 60; // y si en 60 caracteres no hay ni una coma ni un punto, se corta en el último espacio
 const NEXT_MIN = 40; // las siguientes, algo más largas para una prosodia natural
 const MAX = 160;
 
@@ -26,17 +27,19 @@ export class SentenceStream {
       const rest = full.slice(this.used);
       const min = this.first ? FIRST_MIN : NEXT_MIN;
       let cut = -1;
-      const re = /[.!?…:;]+["')»]*(?=\s)|\n+/g;
+      // la primera locución también se corta en comas y rayas: arranca la voz sin esperar a que acabe la primera frase
+      const re = this.first ? /[.!?…:;,—–]+["')»]*(?=\s)|\n+/g : /[.!?…:;]+["')»]*(?=\s)|\n+/g;
       for (let m = re.exec(rest); m; m = re.exec(rest)) {
         if (m.index + m[0].length >= min) {
           cut = m.index + m[0].length;
           break;
         }
       }
-      if (cut < 0 && rest.length > MAX) {
-        const head = rest.slice(0, MAX);
+      const limit = this.first ? FIRST_MAX : MAX;
+      if (cut < 0 && rest.length > limit) {
+        const head = rest.slice(0, limit);
         const soft = Math.max(head.lastIndexOf(', '), head.lastIndexOf(' '));
-        cut = soft > min ? soft + 1 : MAX;
+        cut = soft > min ? soft + 1 : limit;
       }
       if (cut < 0) return out;
       this.take(rest.slice(0, cut), cut, out);

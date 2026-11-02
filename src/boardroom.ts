@@ -5,13 +5,17 @@ import { boardCommand } from './board-commands.js';
 import { notes } from './notes.js';
 import { agentEditor } from './agent-editor.js';
 import { SentenceStream } from './speech-chunks.js';
-import { Listener, Speaker } from './voice.js';
+import { Speaker } from './voice.js';
+import { OpenMic } from './open-mic.js';
 
 /**
  * Controlador de la reunión: une API (empresas, reuniones, chat), voz (STT/TTS),
  * el panel 3D (vía `bridge`) y la interfaz DOM.
  */
 const MAX_SEATS = 6;
+
+/** Muletillas que dice un director si tarda en llegar su respuesta (se piden al TTS de antemano para que suenen al instante). */
+const FILLERS = ['Hmm.', 'Okay.'];
 /** documentos por página en la tablet XR */
 const DOC_PAGE = 3;
 
@@ -52,7 +56,7 @@ const NOTE_PHRASES = [
 ];
 
 export class Boardroom {
-  private listener = new Listener();
+  private openMic = new OpenMic();
   private speaker = new Speaker();
   private abort: AbortController | null = null;
   private generating = false;
@@ -92,7 +96,20 @@ export class Boardroom {
       bridge.talking = false;
       if (!this.generating) this.idle();
     };
-    this.listener.onLevel = (l) => (bridge.micLevel = l);
+    // micrófono siempre abierto: hablar interrumpe a los directores y, tras 2 s callado, te contestan
+    this.openMic.isPlaying = () => this.speaker.busy || this.generating;
+    this.openMic.onLevel = (l) => (bridge.micLevel = l);
+    this.openMic.onSpeaking = (speaking) => {
+      bridge.micActive = speaking;
+      if (speaking) bridge.status = 'Listening…';
+      this.changed();
+    };
+    this.openMic.onBargeIn = () => {
+      if (this.generating || this.speaker.busy) this.interrupt();
+    };
+    this.openMic.onUtterance = (text) => {
+      if (this.handsFree && this.meeting) void this.send(text);
+    };
     notes.uploader = (id, text, keepalive) => api.saveNotes(id, text, keepalive);
     const fail = (e: unknown) => this.onError((e as Error).message);
     bridge.onMic = () => void this.toggleMic().catch(fail);
@@ -193,53 +210,39 @@ export class Boardroom {
         : this.handsFree
           ? 'Listening · just speak'
           : 'Mic muted · tap the mic to talk';
-    this.resumeListening();
+    this.ensureMic();
+    if (this.meeting && this.speaker.enabled) for (const a of this.participants) for (const f of FILLERS) this.speaker.prewarm(f, a.voice);
   }
 
-  // ---------------------------------------------------------------- escucha continua (manos libres)
+  // ---------------------------------------------------------------- micrófono siempre abierto
 
-  /** El micrófono escucha siempre que no hable nadie y no se haya silenciado (se guarda la preferencia). */
+  /** El micrófono está abierto siempre (también mientras hablan los directores) salvo que se silencie; se guarda la preferencia. */
   handsFree = localStorage.getItem('boardroom.mic.muted') !== '1';
   /** el navegador no dejó usar el micrófono: no se reintenta hasta que el usuario lo pulse */
   private micBlocked = false;
-  private listenTimer = 0;
 
-  private canListen(): boolean {
-    return this.handsFree && !this.micBlocked && this.loggedIn && !!this.meeting && this.seated.length > 0 && !this.listener.active && !this.generating && !this.speaker.busy;
-  }
-
-  /** Pide reanudar la escucha con una pausa corta (así no recoge la cola de la voz de los directores). */
-  private resumeListening(): void {
-    window.clearTimeout(this.listenTimer);
-    this.listenTimer = window.setTimeout(() => void this.listenOnce(), 600);
-  }
-
-  private async listenOnce(): Promise<void> {
-    if (!this.canListen()) return;
-    bridge.micActive = true;
-    bridge.status = 'Listening…';
-    this.changed();
-    let text = '';
-    try {
-      text = await this.listener.start((t) => {
-        bridge.subtitle = t;
-      });
-    } catch (e) {
-      bridge.micActive = false;
-      bridge.micLevel = 0;
-      this.micBlocked = true;
-      this.idle();
-      this.onError(`Microphone unavailable: ${(e as Error).message}. Tap the mic to try again.`);
+  /** Abre el micrófono si hay una reunión con directores sentados y no está silenciado; si no, lo cierra. */
+  private ensureMic(): void {
+    const want = this.handsFree && this.loggedIn && !!this.meeting && this.seated.length > 0;
+    if (!want) {
+      if (this.openMic.running) this.openMic.stop();
       return;
     }
-    bridge.micActive = false;
-    bridge.micLevel = 0;
+    if (this.openMic.running || this.micBlocked) return;
+    this.openMic.start().catch((e) => {
+      this.micBlocked = true;
+      this.onError(`Microphone unavailable: ${(e as Error).message}. Tap the mic to try again.`);
+    });
+  }
+
+  /** El usuario habla encima de los directores (o mientras piensan): se callan y se le deja la palabra. */
+  private interrupt(): void {
+    this.speaker.cancel();
+    this.abort?.abort();
+    bridge.speakerId = null;
+    bridge.thinkingId = null;
+    bridge.talking = false;
     this.changed();
-    if (text && this.handsFree && this.meeting) await this.send(text);
-    else {
-      bridge.subtitle = '';
-      this.idle(); // vuelve a escuchar
-    }
   }
 
   // ---------------------------------------------------------------- sesión y datos
@@ -269,7 +272,7 @@ export class Boardroom {
 
   logout() {
     setToken(null);
-    this.listener.cancel();
+    this.openMic.stop();
     this.speaker.cancel();
     this.companies = [];
     this.company = null;
@@ -388,7 +391,7 @@ export class Boardroom {
 
   /** Sale de la reunión abierta y vuelve a la lista. */
   leaveMeeting() {
-    this.listener.cancel();
+    this.openMic.stop();
     this.speaker.cancel();
     this.abort?.abort();
     this.meeting = null;
@@ -519,11 +522,7 @@ export class Boardroom {
     if (this.seated.length === 0) return this.onError('The table is empty: add a director.');
     this.micBlocked = false;
     if (this.generating || this.speaker.busy) {
-      this.speaker.cancel();
-      this.abort?.abort();
-      bridge.speakerId = null;
-      bridge.thinkingId = null;
-      this.changed();
+      this.interrupt();
       return;
     }
     this.handsFree = !this.handsFree;
@@ -534,7 +533,7 @@ export class Boardroom {
       // sin almacenamiento
     }
     if (!this.handsFree) {
-      this.listener.cancel();
+      this.openMic.stop();
       bridge.micActive = false;
       bridge.micLevel = 0;
     }
@@ -550,11 +549,9 @@ export class Boardroom {
     if (cmd) {
       bridge.subtitle = `Whiteboard: ${cmd}`;
       this.changed();
-      this.resumeListening(); // una orden de pizarra no abre turno: se sigue escuchando
       return;
     }
     if (this.generating) return;
-    this.listener.cancel(); // al escribir un mensaje se deja de escuchar mientras responden
     if (this.seated.length === 0) return this.onError('The table is empty: add a director.');
     this.generating = true;
     this.abort = new AbortController();
@@ -574,6 +571,9 @@ export class Boardroom {
     const live = new Map<string, number>(); // agentId → índice en transcript
     const streams = new Map<string, SentenceStream>(); // agentId → frases pendientes de locutar
     const notes = new Set<string>(); // directores que ya han avisado de que consultan sus apuntes
+    const t0 = performance.now();
+    const lap = (what: string) => console.info(`[latency] ${what} +${Math.round(performance.now() - t0)} ms`);
+    const fillerTimers = new Map<string, number>();
     const say = (agentId: string, chunks: string[]) => {
       const voice = this.agents.find((a) => a.id === agentId)?.voice ?? '';
       for (const t of chunks) this.speaker.enqueue({ agentId, text: t, voice });
@@ -583,6 +583,15 @@ export class Boardroom {
         this.transcript.push({ who: `${e.name} (${e.title})`, text: '' });
         live.set(e.agentId, this.transcript.length - 1);
         streams.set(e.agentId, new SentenceStream());
+        lap('speaker');
+        // si tarda en llegar su respuesta, empieza con una muletilla ya preparada en vez de dejar un silencio
+        fillerTimers.set(
+          e.agentId,
+          window.setTimeout(() => {
+            const filler = FILLERS[Math.floor(Math.random() * FILLERS.length)];
+            if (filler && this.speaker.enabled && !this.speaker.busy) say(e.agentId, [filler]);
+          }, 900),
+        );
         if (!this.speaker.busy) {
           bridge.speakerId = e.agentId;
           bridge.status = `${e.name} is thinking…`;
@@ -598,6 +607,11 @@ export class Boardroom {
         }
       } else if (e.type === 'delta') {
         stopWaiting();
+        if (fillerTimers.has(e.agentId)) {
+          window.clearTimeout(fillerTimers.get(e.agentId));
+          fillerTimers.delete(e.agentId);
+          lap('first text');
+        }
         const i = live.get(e.agentId);
         const line = i === undefined ? undefined : this.transcript[i];
         if (bridge.thinkingId === e.agentId) bridge.thinkingId = null;

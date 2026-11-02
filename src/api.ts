@@ -170,9 +170,9 @@ export const api = {
     return res.blob();
   },
 
-  async transcribe(audio: Blob): Promise<string> {
+  async transcribe(audio: Blob, filename = 'voice.webm'): Promise<string> {
     const fd = new FormData();
-    fd.append('audio', audio, 'voice.webm');
+    fd.append('audio', audio, filename);
     const res = await fetch(`${BASE_URL}/api/v1/voice/transcribe`, { method: 'POST', headers: headers(false), body: fd });
     const d = (await res.json().catch(() => ({}))) as { text?: string; error?: string };
     if (!res.ok) throw new Error(d.error ?? `STT ${res.status}`);
