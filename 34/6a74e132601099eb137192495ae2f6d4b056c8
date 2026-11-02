@@ -1,0 +1,111 @@
+CLAUDE.md
+  s_942df217fb4df8::t_280897a9e51553 4-94
+index.html
+  s_942df217fb4df8::t_a1e8d822cb9704 2,10
+iwsdk.config.json
+  s_942df217fb4df8::t_41fb8b9b99395b 13-14,25-26
+package-lock.json
+  s_1d64b6b198eb99::t_bf92886987458f 15,2409-2414,3179-3184,3202-3222,3321-3326,3377-3397,3756-3761,3893-3919,3939-3944,4004-4012,4084-4098,4225-4230,4328-4333,4517-4525,4735-4740
+package.json
+  s_1d64b6b198eb99::t_3b985b2b745a0a 22,27
+public/scenes/main.iwsdk.scene.json
+  s_942df217fb4df8::t_686a9ab73dfa9a 14-15,18,22-24,27,31-131
+public/ui/agent-editor.uikitml
+  s_942df217fb4df8::t_4824e54578495c 2,4-6,11,13,16-22,24,26-27,30-33,36-40,43-46,49-50,53-65
+public/ui/board-bar.uikitml
+  s_942df217fb4df8::t_3d9f42a16ad330 1-45
+public/ui/tablet.uikitml
+  s_942df217fb4df8::t_b0a556187ea1ee 1-137
+public/ui/tutorial.uikitml
+  s_942df217fb4df8::t_c11a199f65a45c 1-97
+src/agent-editor-ui.ts
+  s_942df217fb4df8::t_ecd6a2526852ba 1-64
+src/agent-editor.ts
+  s_942df217fb4df8::t_ce0d9111283b01 1-81
+src/api.ts
+  s_942df217fb4df8::t_3b994ea97a2d4f 15-18,21-44,49,51-54,89-114,116-125,156-162,175
+src/assets.ts
+  s_942df217fb4df8::t_a5cdcd952cb38a 7-8,10-25
+src/board-commands.ts
+  s_942df217fb4df8::t_40f9910bc6e653 1-44
+src/board-gestures.ts
+  s_942df217fb4df8::t_54301522f42ecc 1-53
+src/board-pointer.ts
+  s_942df217fb4df8::t_0eea6b290d8b55 1-91
+src/board-ui.ts
+  s_942df217fb4df8::t_969f3a10bd4b34 1-58
+src/boardroom.ts
+  s_942df217fb4df8::t_eec05a8a1e9202 1,3-7,14-53,59-67,72-75,86-88,92,95-163,178-185,188-242,263-267,272,280,283,285,288-292,295-296,299-303,311,314-315,317-324,327-346,351,353,355-362,364,374-378,381,384,386-491,505,513-516,518-526,529,531-537,539,541-542,547-558,561-572,575-580,585,588-597,600,603,605-607,609-613,615-622,624,627,631-633,637,639
+src/bridge.ts
+  s_942df217fb4df8::t_7ae6f244377728 12-28,30-31,39-47,50-55,58-69
+src/dev-board-demo.ts
+  s_942df217fb4df8::t_24f7840a32c8d0 1-80
+src/diagnostics.ts
+  s_942df217fb4df8::t_63dbe8072741fb 1-121
+src/dock.ts
+  s_1d64b6b198eb99::t_b32e14f28748a5 1-24
+src/gesture-art.ts
+  s_942df217fb4df8::t_4347cd2906f1fc 1-390
+src/hand-stage.ts
+  s_942df217fb4df8::t_7044ee0f5b2b27 1-192
+src/index.ts
+  s_942df217fb4df8::t_cef88ecf0df7cc 1,6-9,11-38,44,49,51,56-72,75-76
+src/keyboard.ts
+  s_942df217fb4df8::t_485ba6a8268395 1-334
+src/meeting-system.ts
+  s_942df217fb4df8::t_cfacfb88f3233b 1-2,6-21,23,28-32,35-49,61-64,72-89,94,103,105-113,129-164,166-178,190,205-233,235-281,283-286,289-305,326-328,330-337,352-356,392-395,411-422
+src/notebook.ts
+  s_942df217fb4df8::t_b03cbeb812dd17 1-193
+src/notes.ts
+  s_942df217fb4df8::t_ca5dfa9d73e3ee 1-206
+src/person.ts
+  s_942df217fb4df8::t_dd0c22ba370020 21,153,197,479-483,488-497,552-556
+src/room.ts
+  s_942df217fb4df8::t_1b3e2be3684faa 14,48,265,268,270,291,294,384-390,393-399,401-406,537-538,540,542-543,638-641,668,673,675,679,681-682,687,693,695-697,700,704-744,759-761,766,776
+src/speech-chunks.ts
+  s_942df217fb4df8::t_545fcb4c272ac9 1-61
+src/tablet-ui.ts
+  s_942df217fb4df8::t_f934ec26bfb95b 1-120
+src/tutorial-ui.ts
+  s_942df217fb4df8::t_35a418f05b0763 1-105
+src/tutorial.ts
+  s_942df217fb4df8::t_dcf57377bbf597 1-133
+src/ui.ts
+  s_942df217fb4df8::t_aab972132dc75f 2,4-7,13-25,39-61,74-77,80,84-109,111,113,116-117,121-124,126-127,129-133,135-145,149-150,158-172,176-177,180-181,183-195,198-201,203-208,217-309,331,337,348,354-441
+src/voice.ts
+  s_942df217fb4df8::t_8cbcc4aea54d21 36-42,47,54,57-68,70,84,104,107,112-113,117,123,128-182,205,215-216,234-236,265,301-302,305
+src/waiting.ts
+  s_942df217fb4df8::t_2b34852c7fc7cc 1-111
+src/whiteboard-draw.ts
+  s_942df217fb4df8::t_f7fb3ce593ee7b 1-319
+src/whiteboard-export.ts
+  s_942df217fb4df8::t_41006712958de2 1-55
+src/whiteboard.ts
+  s_942df217fb4df8::t_0bc0c105b39afe 1-303
+.claude/settings.json
+  s_1d64b6b198eb99::t_79a1ea6374ad8b 23-24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "346a74e132601099eb137192495ae2f6d4b056c8",
+  "prompts": {},
+  "sessions": {
+    "s_1d64b6b198eb99": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ed3d40bf-fa34-4894-91cd-396f8f59f10d",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "jalvarez <jalvarez2000@gmail.com>"
+    },
+    "s_942df217fb4df8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2b4d681d-a56b-4cb3-b4f7-bd35ecad53c2",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "jalvarez <jalvarez2000@gmail.com>"
+    }
+  }
+}
