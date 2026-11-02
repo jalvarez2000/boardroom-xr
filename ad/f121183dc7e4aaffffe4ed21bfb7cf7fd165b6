@@ -1,0 +1,29 @@
+.gitignore
+  s_942df217fb4df8::t_7962cf2ce48620 46-47
+src/api.ts
+  s_942df217fb4df8::t_45d38d51169193 173,175
+src/boardroom.ts
+  s_942df217fb4df8::t_f8a7ba4b50efba 8-9,16-18,59,99-112,213-214,217,219,224-228,231-244,275,394,525,536,574-576,586-594,610-614
+src/speech-chunks.ts
+  s_942df217fb4df8::t_f542ca6fbce23c 11-12,30-31,38-40,42
+src/voice.ts
+  s_942df217fb4df8::t_2b4dd3be9c8991 233-243,246
+src/open-mic.ts
+  s_942df217fb4df8::t_aa954a8de2e6a6 1-224
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "adf121183dc7e4aaffffe4ed21bfb7cf7fd165b6",
+  "prompts": {},
+  "sessions": {
+    "s_942df217fb4df8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2b4d681d-a56b-4cb3-b4f7-bd35ecad53c2",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "jalvarez <jalvarez2000@gmail.com>"
+    }
+  }
+}
